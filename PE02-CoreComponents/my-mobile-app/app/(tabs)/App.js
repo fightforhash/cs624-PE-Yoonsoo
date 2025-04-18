@@ -1,15 +1,18 @@
+import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, TextInput, StyleSheet } from 'react-native';
 
 const App = () => {
-
+    // State to store the user's favorite course input
     const [favorite, setFavorite] = useState('');
 
     return (
-
+        // Scrollable container for the entire screen
         <ScrollView style = {styles.container}>
         <View style = {styles.logoContainer}>
             <Image source = {require('../../assets/images/icon.png')} style = {styles.logo} />
         </View>
+
+        {/* Question and input field for favorite course */}
 
         <Text style = {styles.question}> Which course did you like?</Text>
         <TextInput
@@ -18,10 +21,14 @@ const App = () => {
             value = {favorite}
             onChangeText = {setFavorite}
         />
-        {favorite !== '' && GG(
+
+        {/* Display user input if not empty */}
+
+        {favorite !== '' && (
             <Text style = {styles.result}> You liked : {favorite} </Text>
         )}
 
+        {/* Core Requirements section */}
         <View style = {styles.section}>
             <Text style = {styles.sectionTitle}>Core requirements (24 credits)</Text>
             {[
@@ -37,30 +44,30 @@ const App = () => {
                 <Text style = {styles.course} key = {idx}>{course} </Text>
             ))}
         </View>
-        
+        {/* Depth of Study section */}
         <View style = {styles.section}>
             <Text style = {styles.sectionTitle}> Depth of Study (6 credits)</Text>
             <Text style = {styles.course}> CS 624 Full-Stack Development - Mobile App</Text>
             <Text style = {styles.course}> CS 628 Full-Stack Development - Web App</Text>
         </View>
-
+        {/* Capstone section */}
         <View style = {styles.section}>
-            <Text style = {styles.sectionTitle}> Depth of Study ( 6 Credits)</Text>
-            <Text style = {styles.sectionTitle}> Depth of Study ( 6 Credits)</Text>
-            <Text style = {styles.sectionTitle}> Depth of Study ( 6 Credits)</Text>
+            <Text style = {styles.sectionTitle}> Capstone (3 credits)</Text>
+            <Text style = {styles.course}> CS 687 Comptuer Science Capstone</Text>
+            
         </View>
 
-        <View style = {styles.section}>
-            <Text style = {styles.sectionTitle}> Depth of Study ( 6 Credits)</Text>
-            <Text style = {styles.sectionTitle}> Depth of Study ( 6 Credits)</Text>
-        </View>
         </ScrollView>
     );
 };
 
-
-const Styles = StyleSheet.create({
-    contianer: {
+// Internal stylesheet
+const styles = StyleSheet.create({
+    footerSpacer: {
+        height: 200,         
+        backgroundColor: '#fff',
+      },
+    container: {
         backgroundColor: '#fff',
         padding: 15
     },
@@ -93,20 +100,20 @@ const Styles = StyleSheet.create({
         marginBottom: 20 
     },
     section: {
-
-        backgroundColor: '#ffff66',
+        backgroundColor: '#fff',
         padding: 10,
         marginBottom: 10
     },
     sectionTitle: {
         fontSize : 20,
         fontWeight : 'bold',
-        marginBottom : 8
+        marginBottom : 8,
+        backgroundColor: '#ffff66'
     },
     course : {
         fontSize : 16, 
         paddingVertical: 2
     }
 });
-
+//export component
 export default App;
