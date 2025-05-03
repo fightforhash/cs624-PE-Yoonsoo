@@ -2,17 +2,23 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Todo from './Todo';
 
-const TodoList = ({ todos, deleteTodo, toggleComplete }) => (
-    <View>
-      {todos.map(todo => (
-        <Todo
-          key={todo.todoIndex}  // key를 todoIndex로 확실히 잡아줌
-          todo={todo}
-          toggleComplete={toggleComplete}
-          deleteTodo={deleteTodo}
-        />
-      ))}
-    </View>
-  );
+// Renders a list of todo items based on provided data and actions
+
+const TodoList = ({ todos = [], deleteTodo, toggleComplete }) => (
+  <View>
+    {todos && todos.length > 0 ? (
+      todos.map((todo) =>
+        todo && todo.title ? (
+          <Todo
+            key={todo.todoIndex}
+            deleteTodo={deleteTodo}
+            toggleComplete={toggleComplete}
+            todo={todo}
+          />
+        ) : null
+      )
+    ) : null}
+  </View>
+);
   
 export default TodoList

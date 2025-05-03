@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, TouchableHighlight, StyleSheet } from 'react-native'
 
+// Button used inside todo items, style changes based on props (Done/Delete)
 const TodoButton = ({ onPress, complete, name }) => (
   <TouchableHighlight
     onPress={onPress}

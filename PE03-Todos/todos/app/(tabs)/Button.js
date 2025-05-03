@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
+// Reusable button component with customizable title
 const Button = ({ submitTodo, title = 'Submit' }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={submitTodo}>
