@@ -1,89 +1,94 @@
-import React, {Component} from 'react';
-import {View, ScrollView, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import React, { Component } from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import Input from './Input';
 import Heading from './Heading';
+import TodoList from './TodoList';
+import Button from './Button';
 
 class App extends Component {
-    constructor(){
-        super();
-        this.state = {
-            inputValue: '',
-            todos: [],
-            type : 'All',
-        };
+  constructor() {
+    super();
+    this.state = {
+      inputValue: '',
+      todos: [],
+      type: 'All',
+    };
+
+    this.submitTodo = this.submitTodo.bind(this);
+    this.toggleComplete = this.toggleComplete.bind(this);
+    this.deleteTodo = this.deleteTodo.bind(this);
+    this.inputChange = this.inputChange.bind(this);
+  }
+
+  deleteTodo(todoIndex) {
+    const todos = this.state.todos.filter(todo => todo.todoIndex !== todoIndex);
+    this.setState({ todos });
+  }
+
+  toggleComplete(todoIndex) {
+    const todos = this.state.todos.map(todo => {
+      if (todo.todoIndex === todoIndex) {
+        return { ...todo, complete: !todo.complete };
+      }
+      return todo;
+    });
+    this.setState({ todos });
+  }
+
+  inputChange(inputValue) {
+    this.setState({ inputValue });
+  }
+
+  submitTodo() {
+    if (this.state.inputValue.trim() === '') {
+      return;
     }
 
-    inputChange(inputValue){
-        console.log(' Input Value: ', inputValue);
-        this.setState({inputValue});
-    }
+    const newTodo = {
+      title: this.state.inputValue,
+      complete: false,
+      todoIndex: Date.now(), // 확실히 중복되지 않는 키값
+    };
 
-    addTodo = () => {
-        if (this.state.inputValue.trim() === ''){
-            return ;
-        }
+    const todos = [...this.state.todos, newTodo];
 
-        const newTodo = {
-            title : this.state.inputValue,
-        };
+    this.setState({
+      todos,
+      inputValue: '',
+    });
+  }
 
-        const todos = [...this.state.todos, newTodo];
-
-        this.setState({
-            todos,
-            inputValue: '',
-        }, () => {
-            console.log('Current todos:' , this.state.todos);
-        });
-    }                        
-
-    render(){
-
-        const { inputValue } = this.state;
-
-        return( 
-            <View style={styles.container}>
-            <ScrollView keyboardShouldPersistTaps="always" style={styles.content}>
-              <Heading/>
-              <Input
-                inputValue = {this.state.inputValue}
-                inputChange = {text => this.inputChange(text)}
-              />
-              <TouchableOpacity style={styles.button} onPress={this.addTodo}>
-                <Text style={styles.buttonText}>Submit</Text>
-            </TouchableOpacity>
-            </ScrollView>
-          </View>
-        );
-    }
+  render() {
+    const { inputValue, todos } = this.state;
+    return (
+      <View style={styles.container}>
+        <ScrollView keyboardShouldPersistTaps="always" style={styles.content}>
+          <Heading />
+          <Input
+            inputValue={inputValue}
+            inputChange={this.inputChange}
+          />
+          <TodoList
+            toggleComplete={this.toggleComplete}
+            deleteTodo={this.deleteTodo}
+            todos={todos}
+          />
+          <Button submitTodo={this.submitTodo} />
+        </ScrollView>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex : 1,
-        backgroundColor: '#f5f5f5',
-    },
-    content:{
-        flex : 1,
-        paddingTop : 60,
-    },
-    button: {
-        backgroundColor: '#ffffff', // 흰색 배경
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        alignSelf: 'flex-end', // 우측 정렬
-        marginRight: 20, // 오른쪽 여백 추가
-        marginTop: 10,
-        borderRadius: 5, // 버튼 둥글게
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-      },
-      buttonText: {
-        color: '#000', // 버튼 글자 색 검정
-        fontSize: 16,
-      },
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  content: {
+    flex: 1,
+    paddingTop: 60,
+  },
 });
 
 export default App;
