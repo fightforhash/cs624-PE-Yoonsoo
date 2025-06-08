@@ -20,42 +20,90 @@ class App extends Component {
     this.inputChange = this.inputChange.bind(this);
   }
 
-  deleteTodo(todoIndex) {
-    const todos = this.state.todos.filter(todo => todo.todoIndex !== todoIndex);
-    this.setState({ todos });
+  componentDidMount() {
+    this.fetchTodos();
   }
 
-  toggleComplete(todoIndex) {
-    const todos = this.state.todos.map(todo => {
-      if (todo.todoIndex === todoIndex) {
-        return { ...todo, complete: !todo.complete };
-      }
-      return todo;
-    });
-    this.setState({ todos });
+  async fetchTodos() {
+    try {
+      const response = await fetch('https://cityutodoapi.azurewebsites.net/todos');
+      const todos = await response.json();
+      this.setState({ todos });
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  }
+
+  async deleteTodo(todoIndex) {
+    const todo = this.state.todos.find(t => t.todoIndex === todoIndex);
+    if (!todo || !todo._id) return;
+
+    try {
+      await fetch(`https://cityutodoapi.azurewebsites.net/todos/${todo._id}`, {
+        method: 'DELETE',
+      });
+      this.setState(prevState => ({
+        todos: prevState.todos.filter(t => t.todoIndex !== todoIndex),
+      }));
+    } catch (error) {
+      console.error('Delete error:', error);
+    }
+  }
+
+  async toggleComplete(todoIndex) {
+    const todo = this.state.todos.find(t => t.todoIndex === todoIndex);
+    if (!todo || !todo._id) return;
+
+    const updated = { ...todo, complete: !todo.complete };
+
+    try {
+      await fetch(`https://cityutodoapi.azurewebsites.net/todos/${todo._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated),
+      });
+
+      this.setState(prevState => ({
+        todos: prevState.todos.map(t =>
+          t.todoIndex === todoIndex ? updated : t
+        ),
+      }));
+    } catch (error) {
+      console.error('Toggle error:', error);
+    }
   }
 
   inputChange(inputValue) {
     this.setState({ inputValue });
   }
 
-  submitTodo() {
-    if (this.state.inputValue.trim() === '') {
-      return;
-    }
+  async submitTodo() {
+    if (this.state.inputValue.trim() === '') return;
 
     const newTodo = {
       title: this.state.inputValue,
       complete: false,
-      todoIndex: Date.now(), // 확실히 중복되지 않는 키값
     };
 
-    const todos = [...this.state.todos, newTodo];
+    try {
+      const response = await fetch('https://cityutodoapi.azurewebsites.net/todos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTodo),
+      });
+      const createdTodo = await response.json();
 
-    this.setState({
-      todos,
-      inputValue: '',
-    });
+      // 추가된 투두를 state에 반영
+      this.setState(prevState => ({
+        todos: [...prevState.todos, {
+          ...createdTodo,
+          todoIndex: Date.now(), // UI용 인덱스
+        }],
+        inputValue: '',
+      }));
+    } catch (error) {
+      console.error('Submit error:', error);
+    }
   }
 
   render() {
@@ -64,10 +112,7 @@ class App extends Component {
       <View style={styles.container}>
         <ScrollView keyboardShouldPersistTaps="always" style={styles.content}>
           <Heading />
-          <Input
-            inputValue={inputValue}
-            inputChange={this.inputChange}
-          />
+          <Input inputValue={inputValue} inputChange={this.inputChange} />
           <TodoList
             toggleComplete={this.toggleComplete}
             deleteTodo={this.deleteTodo}

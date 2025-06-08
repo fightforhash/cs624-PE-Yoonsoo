@@ -1,0 +1,8 @@
+# Input
+The CitiesApp receives user input through multiple touchable interfaces across four main tabs. In the Cities and Countries tabs, users tap on list items to navigate to detailed views. The AddCity tab accepts city name and country name through text input fields, while the AddCountry tab receives country name and currency information via text inputs. The Countries detail screen specifically accepts currency name and currency info inputs for managing financial data. All inputs are validated to ensure completeness before processing.
+
+# Process
+The application processes user interactions through React Navigation's tab and stack navigation system. When users tap country items, the navigation system routes them to the Country detail screen with parameters. The Context API manages global state for countries and cities data. Form submissions trigger validation checks, and successful inputs update the application state through context providers. The navigation stack maintains screen hierarchy, enabling users to navigate between list views and detail screens seamlessly while preserving data integrity.
+
+# Output
+The application outputs organized data displays through multiple screen interfaces. Countries and cities are rendered as scrollable lists with consistent styling using borderBottomWidth and primary colors. The Country detail screen displays existing currency information in a list format above the input section. Success alerts confirm successful data additions before automatically navigating users back to previous screens. Empty states show appropriate "No saved" messages when lists are empty, maintaining clear user feedback throughout the application workflow.
